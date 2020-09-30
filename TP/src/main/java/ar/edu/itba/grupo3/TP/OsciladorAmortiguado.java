@@ -120,7 +120,7 @@ public class OsciladorAmortiguado {
         double mass = p.getMass();
         Double[] prediction = calculateInitialDerivs(p, 5);
         for(int t = 0; t < (this.totalTime / deltaT); t++){
-            if(t % saveFactor == 0) fileHandler.savePosition(particleList);
+            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "gearPredictorCorrector");
             //p.setX(analytic(amplitud, mass, t * deltaT));
             //Double[] prediction = predictEuler(p);
             //Double[] prediction = predictBeeman(p);

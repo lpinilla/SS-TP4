@@ -111,10 +111,10 @@ public class FileHandler {
         }
     }
 
-    public void savePosition(List<Particle> particles ){
+    public void savePosition(List<Particle> particles, String filename){
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(
-                    new File(basePath + "/" + position + ".tsv"), true));
+                    new File(basePath + "/" + filename + ".tsv"), true));
             for(Particle p : particles){
                 String builder =
                         String.format(Locale.US, "%6.7e", p.getX()) + "    " +
