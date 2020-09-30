@@ -33,13 +33,33 @@ public class OsciladorAmortiguado {
                Math.cos(Math.sqrt( (k / m) - (gamma * gamma / (4 * m * m))) * t);
     }
 
-    public Double[] predictEuler(double r, double v, double m){
+    public Double[] predictEuler(Particle p){
+        double r = p.getX();
+        double v = p.getVx();
+        double m = p.getMass();
         Double[] ret = new Double[2];
         double force = calculateForce(r, v);
         //calculate v
         ret[1] = v + (this.deltaT / m) * force;
         //calculate r
         ret[0] = r + this.deltaT * ret[1] + this.deltaT * this.deltaT * force / (2 * m);
+        return ret;
+    }
+
+    public Double[] predictBeeman(Particle p){
+        double r = p.getX();
+        double v = p.getVx();
+        double m = p.getMass();
+        Double[] ret = new Double[2];
+        double accel = calculateAcceleration(r, v, m);
+        double prevAccel = calculateAcceleration(p.getPrevX(), p.getPrevVx(), m);
+        //calculate r
+        ret[0] = r + v * deltaT + ((2/3.0) * accel - (1/6.0) * prevAccel) * deltaT * deltaT;
+        //predecir v
+        double predictedV = v + ((3/2.0) * accel - (1/2.0) * prevAccel) * deltaT;
+        double nextAccel = calculateAcceleration(ret[0], predictedV, m);
+        //calculate v
+        ret[1] = v + ((1/3.0) * nextAccel + (5/6.0) * accel - (1/6.0) * prevAccel) * deltaT;
         return ret;
     }
 
@@ -54,7 +74,8 @@ public class OsciladorAmortiguado {
         for(int t = 0; t < (this.totalTime / deltaT); t++){
             if(t % saveFactor == 0) fileHandler.savePosition(particleList);
             //p.setX(analytic(amplitud, mass, t * deltaT));
-            Double[] prediction = predictEuler(p.getX(), p.getVx(), mass);
+            //Double[] prediction = predictEuler(p);
+            Double[] prediction = predictBeeman(p);
             p.setX(prediction[0]);
             p.setVx((prediction[1]));
         }
