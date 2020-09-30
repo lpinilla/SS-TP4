@@ -113,7 +113,8 @@ public class FileHandler {
 
     public void savePosition(List<Particle> particles ){
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(position), true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(
+                    new File(basePath + "/" + position + ".tsv"), true));
             for(Particle p : particles){
                 String builder =
                         String.format(Locale.US, "%6.7e", p.getX()) + "    " +
