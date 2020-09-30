@@ -11,13 +11,23 @@ public class OsciladorAmortiguado {
     private final double k = Math.pow(10, 4);
     private final double gamma = 100;
     private double totalTime;
+    private double[] gearPredictorArr;
+    private double[] alphas;
     private FileHandler fileHandler;
 
     public OsciladorAmortiguado(double deltaT, double saveFactor, double totalTime){
         this.deltaT = deltaT;
         this.saveFactor = saveFactor;
         this.totalTime = totalTime;
+        this.gearPredictorArr = new double[6];
+        for(int i = 0; i < 6; i++) gearPredictorArr[i] = Math.pow(deltaT, i) / factorial(i);
+        this.alphas = new double[] { (3 / 16.0), (251/360.0), 1.0, (11/18.0), (1/6.0), (1/60.0)};
         this.fileHandler = new FileHandler("resources");
+    }
+
+    private float factorial(int n){
+        if(n == 0 || n == 1) return 1;
+        return n * factorial(n -1);
     }
 
     public double calculateForce(double x, double v){
@@ -63,6 +73,43 @@ public class OsciladorAmortiguado {
         return ret;
     }
 
+    public Double[] calculateInitialDerivs(Particle p, int n){
+        Double[] ret = new Double[n+1];
+        ret[0] = p.getX();
+        ret[1] = p.getVx();
+        double km = -k / p.getMass();
+        ret[2] = km * p.getX();
+        ret[3] = km * ret[1];
+        ret[4] = km * km * p.getX();
+        ret[5] = km * km * ret[1];
+        return ret;
+    }
+
+    public Double[] makePrediction(Double[] derivs){
+        Double[] ret = derivs.clone();
+        double aux;
+        for(int i = 0; i < ret.length; i++){
+            aux = 0;
+            for(int j = 0; j < ret.length - i; j++) aux += derivs[i + j] * gearPredictorArr[j];
+            ret[i] = aux;
+        }
+        return ret;
+    }
+
+    public Double evaluateAcceleration(Double r0, Double r1, Double r2, Particle p){
+        double accel = calculateAcceleration(r0, r1, p.getMass());
+        return (accel - r2) * deltaT * deltaT / 2;
+    }
+
+    public Double[] gearPredictor(Double[] derivs, Particle p){
+        Double[] predictions = makePrediction(derivs);
+        double deltaR2 = evaluateAcceleration(predictions[0], predictions[1], predictions[2], p);
+        for(int i = 0; i < predictions.length; i++){
+            predictions[i] += alphas[i] * deltaR2 * factorial(i) / Math.pow(deltaT, i);
+        }
+        return predictions;
+    }
+
     public void run(){
         double amplitud = 1.0;
         List<Particle> particleList = new ArrayList<>();
@@ -71,11 +118,13 @@ public class OsciladorAmortiguado {
                 0.0, 70.0, 0.0);
         particleList.add(p);
         double mass = p.getMass();
+        Double[] prediction = calculateInitialDerivs(p, 5);
         for(int t = 0; t < (this.totalTime / deltaT); t++){
             if(t % saveFactor == 0) fileHandler.savePosition(particleList);
             //p.setX(analytic(amplitud, mass, t * deltaT));
             //Double[] prediction = predictEuler(p);
-            Double[] prediction = predictBeeman(p);
+            //Double[] prediction = predictBeeman(p);
+            prediction = gearPredictor(prediction, p);
             p.setX(prediction[0]);
             p.setVx((prediction[1]));
         }
