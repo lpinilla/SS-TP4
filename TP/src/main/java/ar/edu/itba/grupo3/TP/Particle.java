@@ -10,9 +10,13 @@ import java.util.*;
 public class Particle implements Comparable<Particle> {
     private Integer id; //id of particle
     private Double x; //x position of particle
+    private Double prevX;
     private Double y; //y position of particle
+    private Double prevY;
     private Double vx; //x velocity of particle
+    private Double prevVx;
     private Double vy; //y velocity of particle
+    private Double prevVy;
     private Double radius; //radius of particle
     private Double mass; //mass of particle
     private Double angle; //value of angle
@@ -33,6 +37,10 @@ public class Particle implements Comparable<Particle> {
         this.mass = mass;
         this.radius = radius;
         this.angle = angle;
+        this.prevX = 0.0;
+        this.prevY = 0.0;
+        this.prevVx = 0.0;
+        this.prevVy = 0.0;
         this.neighbours = new TreeSet<>();
         this.particlesSameCellList = new LinkedList<>();
         this.particlesSameCellList.add(this);
