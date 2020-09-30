@@ -12,26 +12,21 @@ import java.util.Locale;
 @Setter
 public class FileHandler {
 
+    private String basePath;
     private String staticInputFile;
     private String dynamicInputfile;
-    private String dynamicFile;
-    private String hitFreqFile;
-    private String dcmFile;
-    private String velocity;
-    private String hitTimes;
+    private final String dynamicFile = "dynamicOutput";
+    private final String velocity = "velocity";
+    private final String position = "position";
 
-    public FileHandler(){
-        staticInputFile = dynamicInputfile = dynamicFile = hitFreqFile = dcmFile = "";
+    public FileHandler(String basePath){
+        this.basePath = basePath;
+        staticInputFile = dynamicInputfile = "";
     }
 
-    public FileHandler(String staticfile, String dynamicInputfile, String dynamicFile, String hitFreqFile, String dcmFile,String velocity,String hitTimes){
+    public FileHandler(String staticfile, String dynamicInputfile){
         this.staticInputFile = staticfile;
         this.dynamicInputfile = dynamicInputfile;
-        this.dynamicFile = dynamicFile;
-        this.hitFreqFile = hitFreqFile;
-        this.dcmFile = dcmFile;
-        this.velocity=velocity;
-        this.hitTimes=hitTimes;
     }
 
     public SimInfo loadData(){
@@ -94,37 +89,18 @@ public class FileHandler {
         String fileOutputPath = "resources/dynamic.txt";
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(new File(fileOutputPath), true) );
-            writer.write(Integer.toString(i.getN()+4));
+            writer.write(Integer.toString(i.getN()));
             writer.newLine();
             writer.write(Integer.toString(n));
             writer.newLine();
-            //pongo en las esquinas solo para fijar el cuadro de simulacion
-            String builder1 = String.format(Locale.US, "%6.7e", 0.0)+ "    " +
-                    String.format(Locale.US, "%6.7e", 0.0) + "    " +
-                    String.format(Locale.US, "%6.7e", 0.0) + "    " +
-                    String.format(Locale.US, "%6.7e", 0.0);
-            writer.write(builder1);
-            writer.newLine();String builder2 = String.format(Locale.US, "%6.7e", 0.0) + "    " +
-                    String.format(Locale.US, "%6.7e", (double) i.getL()) + "    " +
-                    String.format(Locale.US, "%6.7e", 0.0) + "    " +
-                    String.format(Locale.US, "%6.7e", 0.0);
-            writer.write(builder2);
-            writer.newLine();String builder3 = String.format(Locale.US, "%6.7e", (double) i.getL()) + "    " +
-                    String.format(Locale.US, "%6.7e", 0.0) + "    " +
-                    String.format(Locale.US, "%6.7e", 0.0) + "    " +
-                    String.format(Locale.US, "%6.7e", 0.0);
-            writer.write(builder3);
-            writer.newLine();String builder4 = String.format(Locale.US, "%6.7e", (double) i.getL()) + "    " +
-                    String.format(Locale.US, "%6.7e", (double) i.getL()) + "    " +
-                    String.format(Locale.US, "%6.7e", 0.0) + "    " +
-                    String.format(Locale.US, "%6.7e", 0.0);
-            writer.write(builder4);
-            writer.newLine();
+            double aux;
             for(Particle p : i.getAllParticles()){
-                String builder = String.format(Locale.US, "%6.7e", p.getX()) + "    " +
-                        String.format(Locale.US, "%6.7e", p.getY()) + "    " +
-                        String.format(Locale.US, "%6.7e", p.getRadius()) + "    " +
-                        String.format(Locale.US, "%6.7e", Math.sqrt(Math.pow(p.getVx(),2)+Math.pow(p.getVy(),2)));
+                aux = Math.sqrt(Math.pow(p.getVx(), 2)+Math.pow(p.getVy(), 2));
+                String builder =
+                       String.format(Locale.US, "%6.7e", p.getX()) + "    " +
+                      String.format(Locale.US, "%6.7e", p.getY()) + "    " +
+                      String.format(Locale.US, "%6.7e", p.getRadius()) + "    " +
+                      String.format(Locale.US, "%6.7e", aux);
                 writer.write(builder);
                 writer.newLine();
             }
@@ -135,78 +111,35 @@ public class FileHandler {
         }
     }
 
-    public void saveHitFreq(int hitCount){
-        String fileOutputPath = hitFreqFile;
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(fileOutputPath), true));
-            writer.write(Integer.toString(hitCount));
-            writer.newLine();
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public void saveVelocity(List<Particle> l ){
-        String fileOutputPath = velocity;
+    public void savePosition(List<Particle> particles ){
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(fileOutputPath), true));
-            for(Particle p:l){
-                writer.write(String.format(Locale.US, "%6.7e", (p.realSpeed())));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(position), true));
+            for(Particle p : particles){
+                String builder =
+                        String.format(Locale.US, "%6.7e", p.getX()) + "    " +
+                        String.format(Locale.US, "%6.7e", p.getY()) + "    ";
+                writer.write(builder);
                 writer.newLine();
-
             }
             writer.flush();
             writer.close();
         }catch (IOException e){
             System.out.println(e.getMessage());
-
         }
     }
 
-    public void saveHitTime(double time){
-        String fileOutputPath = hitTimes;
+    public void saveVelocity(List<Particle> l ){
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(fileOutputPath), true));
-            writer.write(time+" ");
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(velocity), true));
+            for(Particle p:l){
+                writer.write(String.format(Locale.US, "%6.7e", (p.realSpeed())));
+                writer.newLine();
+            }
             writer.flush();
             writer.close();
         }catch (IOException e){
             System.out.println(e.getMessage());
         }
-
     }
-
-
-    public void saveDCM(double displacement,double timer){
-        String fileOutputPath = dcmFile;
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(fileOutputPath), true));
-            writer.write(String.format(Locale.US, "%6.7e", (displacement*displacement)));
-            writer.newLine();
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public void saveBigParticlePath(Particle p){
-        String fileOutputPath = "resources/bigParticlePathV"+p.getSpeed()+"M"+p.getMass()+".txt";
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(fileOutputPath), true) );
-            String builder = String.format(Locale.US, "%6.7e", p.getX()) + "    " +
-                    String.format(Locale.US, "%6.7e", p.getY());
-            writer.write(builder);
-            writer.newLine();
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
-    }
-
 
 }

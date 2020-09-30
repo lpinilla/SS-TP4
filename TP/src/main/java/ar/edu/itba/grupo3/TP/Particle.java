@@ -136,5 +136,26 @@ public class Particle implements Comparable<Particle> {
         return Math.sqrt(this.vx*this.vx+this.vy*this.vy);
     }
 
+    public void setX(double x){
+        this.prevX = this.getX();
+        this.x = x;
+    }
+
+    public void setY(double y){
+        this.prevY = this.getY();
+        this.y = y;
+    }
+
+    public void setVx(double vx){
+        this.prevVx = this.getVx();
+        this.vx = vx;
+    }
+
+    public void setVy(double vy){
+        this.prevVy = this.getVy();
+        this.vy = vy;
+    }
+
+
 }
 

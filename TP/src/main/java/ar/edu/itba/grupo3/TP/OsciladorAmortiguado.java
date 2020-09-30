@@ -1,15 +1,20 @@
 package ar.edu.itba.grupo3.TP;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OsciladorAmortiguado {
 
     private double delta_t;
     private final double k = Math.pow(10, 4);
     private final double gamma = 100;
     private double total_time;
+    private FileHandler fileHandler;
 
     public OsciladorAmortiguado(double delta_t, double total_time){
         this.delta_t = delta_t;
         this.total_time = total_time;
+        this.fileHandler = new FileHandler("resources");
     }
 
 
@@ -37,6 +42,15 @@ public class OsciladorAmortiguado {
 
     public void run(){
         double amplitud = 1.0;
-        Particle p = new Particle(1.0,0.0, -amplitud * this.gamma / 2.0, 0.0, 0.0, 70.0, 0.0);
+        List<Particle> particleList = new ArrayList<>();
+        Particle p = new Particle(1.0,0.0,
+                -amplitud * this.gamma / 2.0, 0.0,
+                0.0, 70.0, 0.0);
+        particleList.add(p);
+        double mass = p.getMass();
+        for(int t = 0; t < (this.total_time / delta_t); t++){
+            fileHandler.savePosition(particleList);
+            p.setX(analytic(calculateAcceleration(p.getX(), p.getVx(), mass), mass, t));
+        }
     }
 }
