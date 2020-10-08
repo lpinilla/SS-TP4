@@ -17,6 +17,10 @@ public class Particle implements Comparable<Particle> {
     private Double prevVx;
     private Double vy; //y velocity of particle
     private Double prevVy;
+    private Double ax; //aceleración de la partícula
+    private Double prevAx;
+    private Double ay; //aceleración de la partícula
+    private Double prevAy;
     private Double radius; //radius of particle
     private Double mass; //mass of particle
     private Double angle; //value of angle
@@ -34,6 +38,30 @@ public class Particle implements Comparable<Particle> {
         this.y = y;
         this.vx = vx;
         this.vy = vy;
+        this.mass = mass;
+        this.radius = radius;
+        this.angle = angle;
+        this.prevX = 0.0;
+        this.prevY = 0.0;
+        this.prevVx = 0.0;
+        this.prevVy = 0.0;
+        this.ax = 0d;
+        this.ay = 0d;
+        this.prevAx = 0d;
+        this.prevAy = 0d;
+        this.neighbours = new TreeSet<>();
+        this.particlesSameCellList = new LinkedList<>();
+        this.particlesSameCellList.add(this);
+    }
+
+
+    public Particle(Double x, Double y, Double vx, Double vy, Double ax, Double ay, Double radius, Double mass, Double angle) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.ax = ax;
+        this.ay = ay;
         this.mass = mass;
         this.radius = radius;
         this.angle = angle;
@@ -132,6 +160,10 @@ public class Particle implements Comparable<Particle> {
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
 
+    public double distanceToParticle(Particle p){
+        return distanceToPoint(p.getX(), p.getY());
+    }
+
     public double realSpeed(){
         return Math.sqrt(this.vx*this.vx+this.vy*this.vy);
     }
@@ -154,6 +186,16 @@ public class Particle implements Comparable<Particle> {
     public void setVy(double vy){
         this.prevVy = this.getVy();
         this.vy = vy;
+    }
+
+    public void setAx(double ax){
+        this.prevAx = this.getAx();
+        this.ax = ax;
+    }
+
+    public void setAy(double ay){
+        this.prevAy = this.getAy();
+        this.ay = ay;
     }
 
 

@@ -8,7 +8,7 @@ public class App
 {
     public static void main( String[] args )
     {
-        OsciladorAmortiguado osciladorAmortiguado = new OsciladorAmortiguado(0.001, 2, 5.0);
-        osciladorAmortiguado.run();
+        //OsciladorAmortiguado osciladorAmortiguado = new OsciladorAmortiguado(0.001, 2, 5.0);
+        //osciladorAmortiguado.run();
     }
 }
