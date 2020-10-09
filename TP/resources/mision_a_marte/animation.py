@@ -15,7 +15,7 @@ times = [
 
 aux = {'t': 0, 'x' : [], 'y' : [], 'v' : []}
 
-with open("mision_a_marte/test_run.tsv") as f:
+with open("test_run.tsv") as f:
     next(f)
     for line in f:
         #-1 para ignorar el \n

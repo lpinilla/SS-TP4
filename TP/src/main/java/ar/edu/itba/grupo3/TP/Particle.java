@@ -50,10 +50,10 @@ public class Particle implements Comparable<Particle> {
         this.prevVy = 0.0;
         this.ax = 0d;
         this.ay = 0d;
-        this.prevAx = 0d;
-        this.prevAy = 0d;
-        this.futAx = 0d;
-        this.futAy = 0d;
+        this.prevAx = 0.0;
+        this.prevAy = 0.0;
+        this.futAx = 0.0;
+        this.futAy = 0.0;
         this.neighbours = new TreeSet<>();
         this.particlesSameCellList = new LinkedList<>();
         this.particlesSameCellList.add(this);
@@ -157,6 +157,12 @@ public class Particle implements Comparable<Particle> {
         if(finalProperty > Math.PI * 2) finalProperty -= 2 * Math.PI;
         if(finalProperty < 0) finalProperty += Math.PI * 2;
         this.setAngle(finalProperty);
+    }
+
+    public double angleBetweenParticle(Particle p){
+        double deltaX = p.getX() - this.x;
+        double deltaY = p.getY() - this.y;
+        return Math.atan2(deltaY, deltaX);
     }
 
     public double distanceToPoint(double x, double y){
