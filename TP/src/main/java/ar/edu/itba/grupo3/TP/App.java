@@ -10,5 +10,7 @@ public class App
     {
         //OsciladorAmortiguado osciladorAmortiguado = new OsciladorAmortiguado(0.001, 2, 5.0);
         //osciladorAmortiguado.run();
+        MisionAMarte misionAMarte = new MisionAMarte(1d);
+        misionAMarte.runSimulation(86400);
     }
 }

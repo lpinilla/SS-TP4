@@ -19,8 +19,10 @@ public class Particle implements Comparable<Particle> {
     private Double prevVy;
     private Double ax; //aceleración de la partícula
     private Double prevAx;
+    private Double futAx;
     private Double ay; //aceleración de la partícula
     private Double prevAy;
+    private Double futAy;
     private Double radius; //radius of particle
     private Double mass; //mass of particle
     private Double angle; //value of angle
@@ -49,6 +51,8 @@ public class Particle implements Comparable<Particle> {
         this.ay = 0d;
         this.prevAx = 0d;
         this.prevAy = 0d;
+        this.futAx = 0d;
+        this.futAy = 0d;
         this.neighbours = new TreeSet<>();
         this.particlesSameCellList = new LinkedList<>();
         this.particlesSameCellList.add(this);

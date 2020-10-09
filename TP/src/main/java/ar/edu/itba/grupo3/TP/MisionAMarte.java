@@ -1,5 +1,6 @@
 package ar.edu.itba.grupo3.TP;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MisionAMarte {
@@ -7,34 +8,33 @@ public class MisionAMarte {
     //masas en 10^24
     private final double spaceStationHeight = 1500; // km
     private final double spaceStationOrbitalSpeed = 7.12; // km /s
-    private final double gravitationalConstant = 6.67430e-8; // km^3 / (kg * s^2)
+    private final double gravitationalConstant = 6.67430e-11; // m^3 / (kg * s^2)
     private double deltaT;
+    private FileHandler fileHandler;
 
-    //cuerpos estelares
-    private Particle sun, earth, mars;
+    //objetos
+    private List<Particle> objects;
     //nave espacial
     private Particle spaceShuttle;
 
     public MisionAMarte(double deltaT){
-        this.sun = new Particle(0.0, 0.0,
+        //sun
+        this.objects = new ArrayList<>();
+        this.objects.add(new Particle(0.0, 0.0,
                 0.0, 0.0,
-                696000.0, 1988500.0, 0.0);
-        this.earth = new Particle(1.493188929636662E+08, 1.318936357931255E+07,
+                696000.0, 1988500.0, 0.0));
+        //earth
+        this.objects.add(new Particle(1.493188929636662E+08, 1.318936357931255E+07,
                 -3.113279917782445E+00,2.955205189256462E+01,
-                6371.01, 5.97219, 0.0);
-        this.mars = new Particle(2.059448551842169E+08, 4.023977946528339E+07,
+                6371.01, 5.97219, 0.0));
+        //mars
+        this.objects.add(new Particle(2.059448551842169E+08, 4.023977946528339E+07,
                 -3.717406842095575E+00, 2.584914078301731E+01,
-                3389.92, 6.4171, 0.0);
+                3389.92, 6.4171, 0.0));
         this.deltaT = deltaT;
+        this.fileHandler = new FileHandler("/resources/mision_a_marte");
     }
 
-    public void evolveSystem(){
-        //calcular aceleración
-        //desplazar
-        //calcular velocidad predictiva
-        //calcular la fuerza en la nueva posición
-        //calcular velocidad corregida
-    }
 
     public double[] calculateForces(Particle p, List<Particle> p2){
         double[] ret = new double[] {0.0, 0.0};
@@ -48,22 +48,83 @@ public class MisionAMarte {
         return ret;
     }
 
-    //public double calculateAcceleration(double x, double v, double m){
-    //    return calculateForce(x, v) / m;
-    //}
+    public void calculateAccelerations(){
+        List<Particle> aux = new ArrayList<>(objects);
+        for(Particle p : objects){
+            //eliminar al objeto de la lista
+            aux.remove(p);
+            //calcular la fuerza resultante entre este objeto y todos los demás
+            double[] forces = calculateForces(p, aux);
+            p.setAx(forces[0] / p.getMass());
+            p.setAy(forces[1] / p.getMass());
+            //volver a agregar al objeto a la lista
+            aux.add(p);
+        }
+    }
 
-    //public Double[] predictBeeman(double r, double prev_r, double v, double prev_v, double m){
-    //    Double[] ret = new Double[2];
-    //    double accel = calculateAcceleration(r, v, m);
-    //    double prevAccel = calculateAcceleration(prev_r, prev_v, m);
-    //    //calculate r
-    //    ret[0] = r + v * deltaT + ((2/3.0) * accel - (1/6.0) * prevAccel) * deltaT * deltaT;
-    //    //predecir v
-    //    double predictedV = v + ((3/2.0) * accel - (1/2.0) * prevAccel) * deltaT;
-    //    double nextAccel = calculateAcceleration(ret[0], predictedV, m);
-    //    //calculate v
-    //    ret[1] = v + ((1/3.0) * nextAccel + (5/6.0) * accel - (1/6.0) * prevAccel) * deltaT;
-    //    return ret;
-    //}
+
+    public void calculateFutureAccelerations(){
+        List<Particle> aux = new ArrayList<>(objects);
+        for(Particle p : objects){
+            //eliminar al objeto de la lista
+            aux.remove(p);
+            //calcular la fuerza resultante entre este objeto y todos los demás
+            double[] forces = calculateForces(p, aux);
+            p.setFutAx(forces[0] / p.getMass());
+            p.setFutAy(forces[1] / p.getMass());
+            //volver a agregar al objeto a la lista
+            aux.add(p);
+        }
+    }
+
+    public void moveObjects(){
+        double aux;
+        for(Particle p : objects){
+            aux = p.getX() + p.getVx() * deltaT + ((2d/3) * p.getAx() - (1d/6) * p.getPrevAx())* deltaT*deltaT;
+            p.setX(aux);
+            aux = p.getY() + p.getVy() * deltaT + ((2d/3) * p.getAy() - (1d/6) * p.getPrevAy())* deltaT*deltaT;
+            p.setY(aux);
+        }
+    }
+
+    public void calculatePredictedVelocities(){
+        double aux;
+        for(Particle p : objects){
+            aux = p.getVx() + ( (3d/2) * p.getAx() - (1d/2) * p.getPrevAx()) * deltaT;
+            p.setVx(aux);
+            aux = p.getVy() + ( (3d/2) * p.getAy() - (1d/2) * p.getPrevAy()) * deltaT;
+            p.setVy(aux);
+        }
+    }
+
+    public void calculateCorrectedVelocities(){
+        double aux;
+        for(Particle p : objects){
+            aux = p.getVx() + ( (1d/3) * p.getFutAx() + (5d/6) * p.getAx() - (1d/6) * p.getPrevAx()) * deltaT;
+            p.setVx(aux);
+            aux = p.getVy() + ( (1d/3) * p.getFutAy() + (5d/6) * p.getAy() - (1d/6) * p.getPrevAy()) * deltaT;
+            p.setVy(aux);
+        }
+    }
+
+    public void evolveSystem(){
+        //calcular aceleración
+        calculateAccelerations();
+        //desplazar
+        moveObjects();
+        //calcular velocidad predictiva
+        calculatePredictedVelocities();
+        //calcular la fuerza en la nueva posición
+        calculateFutureAccelerations();
+        //calcular velocidad corregida
+        calculateCorrectedVelocities();
+    }
+
+    public void runSimulation(int iterations){
+        for(int i = 0; i < iterations; i++){
+            evolveSystem();
+            fileHandler.savePosition(objects, "test_run.tsv");
+        }
+    }
 
 }
