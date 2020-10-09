@@ -110,7 +110,15 @@ public class OsciladorAmortiguado {
         return predictions;
     }
 
-    public void run(){
+    public void runAll(){
+        runAnalytic();
+        runEuler();
+        runBeeman();
+        runGear();
+    }
+
+
+    public void runAnalytic(){
         double amplitud = 1.0;
         List<Particle> particleList = new ArrayList<>();
         Particle p = new Particle(0, 1.0,0.0,
@@ -118,17 +126,59 @@ public class OsciladorAmortiguado {
                 0.0, 70.0, 0.0);
         particleList.add(p);
         double mass = p.getMass();
-        Double[] prediction = calculateInitialDerivs(p, 5);
         for(int t = 0; t < (this.totalTime / deltaT); t++){
-            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "gearPredictorCorrector");
-            //p.setX(analytic(amplitud, mass, t * deltaT));
-            //Double[] prediction = predictEuler(p);
-            //Double[] prediction = predictBeeman(p);
-            prediction = gearPredictor(prediction, p);
+            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "analytic");
+            p.setX(analytic(amplitud, mass, t * deltaT));
+        }
+    }
+
+
+    public void runEuler(){
+        double amplitud = 1.0;
+        List<Particle> particleList = new ArrayList<>();
+        Particle p = new Particle(0, 1.0,0.0,
+                -amplitud * this.gamma / (2.0 * 70.0), 0.0,
+                0.0, 70.0, 0.0);
+        particleList.add(p);
+        for(int t = 0; t < (this.totalTime / deltaT); t++){
+            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "euler");
+            Double[] prediction = predictEuler(p);
             p.setX(prediction[0]);
             p.setVx((prediction[1]));
         }
     }
 
+
+    public void runBeeman(){
+        double amplitud = 1.0;
+        List<Particle> particleList = new ArrayList<>();
+        Particle p = new Particle(0, 1.0,0.0,
+                -amplitud * this.gamma / (2.0 * 70.0), 0.0,
+                0.0, 70.0, 0.0);
+        particleList.add(p);
+        for(int t = 0; t < (this.totalTime / deltaT); t++){
+            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "beeman");
+            Double[] prediction = predictBeeman(p);
+            p.setX(prediction[0]);
+            p.setVx((prediction[1]));
+        }
+    }
+
+
+    public void runGear(){
+        double amplitud = 1.0;
+        List<Particle> particleList = new ArrayList<>();
+        Particle p = new Particle(0, 1.0,0.0,
+                -amplitud * this.gamma / (2.0 * 70.0), 0.0,
+                0.0, 70.0, 0.0);
+        particleList.add(p);
+        Double[] prediction = calculateInitialDerivs(p, 5);
+        for(int t = 0; t < (this.totalTime / deltaT); t++){
+            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "gearPredictorCorrector");
+            prediction = gearPredictor(prediction, p);
+            p.setX(prediction[0]);
+            p.setVx((prediction[1]));
+        }
+    }
 
 }
