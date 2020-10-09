@@ -32,7 +32,7 @@ public class MisionAMarte {
                 -3.717406842095575E+00, 2.584914078301731E+01,
                 3389.92, 6.4171, 0.0));
         this.deltaT = deltaT;
-        this.fileHandler = new FileHandler("/resources/mision_a_marte");
+        this.fileHandler = new FileHandler("resources/mision_a_marte");
     }
 
 
@@ -121,10 +121,12 @@ public class MisionAMarte {
         calculateCorrectedVelocities();
     }
 
-    public void runSimulation(int iterations){
-        for(int i = 0; i < iterations; i++){
+    public void runSimulation(double iterations){
+        List<Particle> stelar = new ArrayList<>(objects);
+        stelar.removeIf(p -> p.getId() == 0);
+        for(long i = 0; i < (iterations / deltaT); i++){
             evolveSystem();
-            fileHandler.savePosition(objects, "test_run.tsv");
+            fileHandler.savePositionIndexed(stelar, "test_run", i);
         }
     }
 
