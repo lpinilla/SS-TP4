@@ -8,7 +8,7 @@ public class MisionAMarte {
     //masas en 10^24
     private final double spaceStationHeight = 1500; // km
     private final double spaceStationOrbitalSpeed = 7.12; // km /s
-    private final double gravitationalConstant = 6.67430e-14; // m^3 / (kg * s^2)
+    private final double gravitationalConstant =  6.67408e-11; // m^3 / (kg * s^2)
     private double deltaT;
     private FileHandler fileHandler;
 
@@ -24,15 +24,15 @@ public class MisionAMarte {
         this.objects = new ArrayList<>();
         this.objects.add(new Particle(0, 0.0, 0.0,
                 0.0, 0.0,
-                696000.0, 1988500.0, 0.0));
+                696000 * Math.pow(10,3), 1988500.0 * Math.pow(10,24), 0.0));
         //earth
-        this.objects.add(new Particle(1, 1.493188929636662E+08, 1.318936357931255E+07,
-                -3.113279917782445E+00,2.955205189256462E+01,
-                6371.01, 5.97219, 0.0));
+        this.objects.add(new Particle(1, 1.493188929636662 * Math.pow(10,11), 1.318936357931255* Math.pow(10,10),
+                -3.113279917782445 * Math.pow(10,0),2.955205189256462* Math.pow(10,4),
+                6371.01 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
         //mars
-        this.objects.add(new Particle(2, 2.059448551842169E+08, 4.023977946528339E+07,
-                -3.717406842095575E+00, 2.584914078301731E+01,
-                3389.92, 6.4171, 0.0));
+        this.objects.add(new Particle(2, 2.059448551842169* Math.pow(10,11), 4.023977946528339* Math.pow(10,10),
+                -3.717406842095575* Math.pow(10,3), 2.584914078301731 * Math.pow(10,4),
+                3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
         this.deltaT = deltaT;
         this.saveFreq = saveFreq;
         this.fileHandler = new FileHandler("resources/mision_a_marte");

@@ -41,9 +41,11 @@ times = times[1:]
 #ax.xaxis.set_major_locator(MultipleLocator(10))
 #ax.yaxis.set_major_locator(MultipleLocator(10))
 
+size = 1e12
+
 def init():
-    ax.set_ylim(-1e9, 1e9)
-    ax.set_xlim(-1e9, 1e9)
+    ax.set_ylim(-size, size)
+    ax.set_xlim(-size, size)
     ax.grid(linestyle='-', linewidth='0.5')
     del xdata[:]
     del ydata[:]
