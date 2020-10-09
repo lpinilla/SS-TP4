@@ -71,7 +71,7 @@ public class GenerateInput {
             String y = String.format(Locale.US, "%.4f", L / 2.0) + "\t";
             String vx = String.format(Locale.US, "%.4f", 0.0) + "\t";
             String vy = String.format(Locale.US, "%.4f", 0.0);
-            generated.add(new Particle(L/2.0,L/2.0, 0.0, 0.0, 0.7, 0.0, 0.0));
+            generated.add(new Particle(0, L/2.0,L/2.0, 0.0, 0.0, 0.7, 0.0, 0.0));
             //ahora seteamos los objetos más pequeños
             writer.println(x + y + vx + vy);
             double xpos, ypos;
@@ -98,7 +98,7 @@ public class GenerateInput {
                 writerVelocity.println(
                         String.format(Locale.US, "%6.7e", Math.sqrt(xvel*xvel+yvel*yvel))+" ");
 
-                generated.add(new Particle(xpos, ypos, xvel, yvel, 0.2, 0.0, 0.0));
+                generated.add(new Particle(1, xpos, ypos, xvel, yvel, 0.2, 0.0, 0.0));
             }
             writer.flush();
             writer.close();

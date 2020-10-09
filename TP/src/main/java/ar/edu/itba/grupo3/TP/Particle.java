@@ -35,7 +35,8 @@ public class Particle implements Comparable<Particle> {
     //a otra particula ubicada en el mismo casillero
     private List<Particle> particlesSameCellList;
 
-    public Particle(Double x, Double y, Double vx, Double vy, Double radius, Double mass, Double angle) {
+    public Particle(int id, Double x, Double y, Double vx, Double vy, Double radius, Double mass, Double angle) {
+        this.id = id;
         this.x = x;
         this.y = y;
         this.vx = vx;

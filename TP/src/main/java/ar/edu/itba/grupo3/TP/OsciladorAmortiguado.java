@@ -113,7 +113,7 @@ public class OsciladorAmortiguado {
     public void run(){
         double amplitud = 1.0;
         List<Particle> particleList = new ArrayList<>();
-        Particle p = new Particle(1.0,0.0,
+        Particle p = new Particle(0, 1.0,0.0,
                 -amplitud * this.gamma / (2.0 * 70.0), 0.0,
                 0.0, 70.0, 0.0);
         particleList.add(p);

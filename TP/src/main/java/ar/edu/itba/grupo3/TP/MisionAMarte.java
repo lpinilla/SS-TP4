@@ -20,15 +20,15 @@ public class MisionAMarte {
     public MisionAMarte(double deltaT){
         //sun
         this.objects = new ArrayList<>();
-        this.objects.add(new Particle(0.0, 0.0,
+        this.objects.add(new Particle(0, 0.0, 0.0,
                 0.0, 0.0,
                 696000.0, 1988500.0, 0.0));
         //earth
-        this.objects.add(new Particle(1.493188929636662E+08, 1.318936357931255E+07,
+        this.objects.add(new Particle(1, 1.493188929636662E+08, 1.318936357931255E+07,
                 -3.113279917782445E+00,2.955205189256462E+01,
                 6371.01, 5.97219, 0.0));
         //mars
-        this.objects.add(new Particle(2.059448551842169E+08, 4.023977946528339E+07,
+        this.objects.add(new Particle(2, 2.059448551842169E+08, 4.023977946528339E+07,
                 -3.717406842095575E+00, 2.584914078301731E+01,
                 3389.92, 6.4171, 0.0));
         this.deltaT = deltaT;
@@ -80,6 +80,7 @@ public class MisionAMarte {
     public void moveObjects(){
         double aux;
         for(Particle p : objects){
+            if(p.getId() == 0) continue;
             aux = p.getX() + p.getVx() * deltaT + ((2d/3) * p.getAx() - (1d/6) * p.getPrevAx())* deltaT*deltaT;
             p.setX(aux);
             aux = p.getY() + p.getVy() * deltaT + ((2d/3) * p.getAy() - (1d/6) * p.getPrevAy())* deltaT*deltaT;
