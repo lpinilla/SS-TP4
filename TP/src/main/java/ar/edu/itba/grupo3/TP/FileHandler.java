@@ -139,7 +139,7 @@ public class FileHandler {
             for(Particle p : particles){
                 String builder =
                         String.format(Locale.US, "%6.7e", p.getX()) + "    " +
-                                String.format(Locale.US, "%6.7e", p.getY()) + "    ";
+                                String.format(Locale.US, "%6.7e", p.getY());
                 writer.write(builder);
                 writer.newLine();
             }

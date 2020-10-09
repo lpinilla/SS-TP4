@@ -8,7 +8,7 @@ public class MisionAMarte {
     //masas en 10^24
     private final double spaceStationHeight = 1500; // km
     private final double spaceStationOrbitalSpeed = 7.12; // km /s
-    private final double gravitationalConstant = 6.67430e-11; // m^3 / (kg * s^2)
+    private final double gravitationalConstant = 6.67430e-14; // m^3 / (kg * s^2)
     private double deltaT;
     private FileHandler fileHandler;
 
@@ -17,7 +17,9 @@ public class MisionAMarte {
     //nave espacial
     private Particle spaceShuttle;
 
-    public MisionAMarte(double deltaT){
+    private int saveFreq;
+
+    public MisionAMarte(double deltaT, int saveFreq){
         //sun
         this.objects = new ArrayList<>();
         this.objects.add(new Particle(0, 0.0, 0.0,
@@ -32,6 +34,7 @@ public class MisionAMarte {
                 -3.717406842095575E+00, 2.584914078301731E+01,
                 3389.92, 6.4171, 0.0));
         this.deltaT = deltaT;
+        this.saveFreq = saveFreq;
         this.fileHandler = new FileHandler("resources/mision_a_marte");
     }
 
@@ -122,11 +125,11 @@ public class MisionAMarte {
     }
 
     public void runSimulation(double iterations){
-        List<Particle> stelar = new ArrayList<>(objects);
-        stelar.removeIf(p -> p.getId() == 0);
+        //List<Particle> stelar = new ArrayList<>(objects);
+        //stelar.removeIf(p -> p.getId() == 0);
         for(long i = 0; i < (iterations / deltaT); i++){
             evolveSystem();
-            fileHandler.savePositionIndexed(stelar, "test_run", i);
+            if(i % saveFreq == 0) fileHandler.savePositionIndexed(objects, "test_run", i);
         }
     }
 
