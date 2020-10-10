@@ -164,4 +164,19 @@ public class FileHandler {
         }
     }
 
+    public void saveData(String file, double idx, double data){
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(file), true));
+            String str = String.format(Locale.US, "%6.7e", idx) + "    "
+                    + String.format(Locale.US, "%6.7e", data);
+            writer.write(str);
+            writer.newLine();
+            writer.flush();
+            writer.close();
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+
 }

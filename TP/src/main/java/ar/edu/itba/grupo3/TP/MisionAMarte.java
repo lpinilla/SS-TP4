@@ -28,12 +28,20 @@ public class MisionAMarte {
                 0.0, 0.0,
                 696000 * Math.pow(10,3), 1988500.0 * Math.pow(10,24), 0.0));
         //earth
-        this.objects.add(new Particle(1, 1.493188929636662 * Math.pow(10,11), 1.318936357931255* Math.pow(10,10),
-                -3.113279917782445 * Math.pow(10,3),2.955205189256462 * Math.pow(10,4),
+        //fecha del tp
+        //this.objects.add(new Particle(1, 1.493188929636662 * Math.pow(10,11), 1.318936357931255* Math.pow(10,10),
+        //        -3.113279917782445 * Math.pow(10,3),2.955205189256462 * Math.pow(10,4),
+        //        6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
+        //1ero de junio 2020
+        this.objects.add(new Particle(1, -5.014824835036334 * Math.pow(10,10), -1.431715570585378 * Math.pow(10,11),
+                2.762681880274097 * Math.pow(10,4) ,-9.946939080083073 * Math.pow(10,3),
                 6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
         //mars
-        this.objects.add(new Particle(2, 2.059448551842169* Math.pow(10,11), 4.023977946528339* Math.pow(10,10),
-                -3.717406842095575* Math.pow(10,3), 2.584914078301731 * Math.pow(10,4),
+        //this.objects.add(new Particle(2, 2.059448551842169* Math.pow(10,11), 4.023977946528339* Math.pow(10,10),
+        //        -3.717406842095575* Math.pow(10,3), 2.584914078301731 * Math.pow(10,4),
+        //        3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
+        this.objects.add(new Particle(2, 9.368383080176222 * Math.pow(10,10), -1.887390255355240 * Math.pow(10,11),
+                2.261977282742894 * Math.pow(10,4), 1.285278029310825 * Math.pow(10,4),
                 3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
         this.deltaT = deltaT;
         this.saveFreq = saveFreq;
@@ -137,11 +145,24 @@ public class MisionAMarte {
     }
 
     public void runSimulation(double iterations){
-        //List<Particle> stelar = new ArrayList<>(objects);
-        //stelar.removeIf(p -> p.getId() == 0);
         for(long i = 0; i < (iterations / deltaT); i++){
             evolveSystem();
             if(i % saveFreq == 0) fileHandler.savePositionIndexed(objects, "test_run", i);
+        }
+    }
+
+    public void findBestDate(double iterations){
+        Particle earth = null, mars = null;
+        for (Particle p : objects){
+            if(p.getId() == 1) earth = p;
+            if(p.getId() == 2) mars = p;
+        }
+        for(long i = 0; i < (iterations / deltaT); i++){
+            evolveSystem();
+            if(i % saveFreq == 0){
+                fileHandler.saveData("resources/mision_a_marte/distances", i,
+                        earth.distanceToParticle(mars));
+            }
         }
     }
 
