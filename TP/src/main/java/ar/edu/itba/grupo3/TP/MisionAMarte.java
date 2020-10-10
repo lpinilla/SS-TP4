@@ -174,8 +174,8 @@ public class MisionAMarte {
         double angle = sun.angleBetweenParticle(earth);
         double xpos = earth.getX() + Math.cos(angle) * d;
         double ypos = earth.getY() + Math.sin(angle) * d;
-        double vx = velVersor[0] * (launchSpeed + spaceStationOrbitalSpeed + earth.getVx());
-        double vy = earth.getVy();
+        double vx = earth.getVx() + Math.cos(angle) * (launchSpeed + spaceStationOrbitalSpeed);
+        double vy = earth.getVy()+ Math.sin(angle) * (launchSpeed + spaceStationOrbitalSpeed);
         double radius = 100;
         double mass = 5 * Math.pow(10, 5);
         spaceShuttle = new Particle(3,  xpos, ypos, vx, vy, radius, mass, 0.0);
