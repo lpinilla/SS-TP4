@@ -8,6 +8,7 @@ public class App
         //osciladorAmortiguado.runAnalytic();
         MisionAMarte misionAMarte = new MisionAMarte(120.0, 720);
         //misionAMarte.runSimulation(3.154 * Math.pow(10,7));
-        misionAMarte.findBestDate(1.577 * Math.pow(10,7));
+        //misionAMarte.findBestDate(1.577 * Math.pow(10,7));
+        misionAMarte.sendShuttle(1.577 * Math.pow(10,7));
     }
 }

@@ -1,3 +1,4 @@
+import sys
 import matplotlib.animation as ani
 import matplotlib.pyplot as plt
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
@@ -15,7 +16,7 @@ times = [
 
 aux = {'t': 0, 'x' : [], 'y' : [], 'v' : []}
 
-with open("test_run.tsv") as f:
+with open(str(sys.argv[1])) as f:
     next(f)
     for line in f:
         #-1 para ignorar el \n

@@ -8,8 +8,9 @@ import java.util.List;
 public class MisionAMarte {
 
     //masas en 10^24
-    private final double spaceStationHeight = 1500; // km
-    private final double spaceStationOrbitalSpeed = 7.12; // km /s
+    private final double spaceStationHeight = 1500 * Math.pow(10, 3); // m
+    private final double spaceStationOrbitalSpeed = 7.12 * Math.pow(10, 3); // m /s
+    private final double launchSpeed = 8 * Math.pow(10, 3); // m / s
     private final double gravitationalConstant =  6.67408 * Math.pow(10,-11); // m^3 / (kg * s^2)
     private double deltaT;
     private FileHandler fileHandler;
@@ -152,17 +153,48 @@ public class MisionAMarte {
     }
 
     public void findBestDate(double iterations){
-        Particle earth = null, mars = null;
-        for (Particle p : objects){
-            if(p.getId() == 1) earth = p;
-            if(p.getId() == 2) mars = p;
-        }
+        Particle earth = objects.stream().filter(p -> p.getId() == 1).findFirst().get();
+        Particle mars = objects.stream().filter(p -> p.getId() == 2).findFirst().get();
         for(long i = 0; i < (iterations / deltaT); i++){
             evolveSystem();
             if(i % saveFreq == 0){
-                fileHandler.saveData("resources/mision_a_marte/distances", (double)i / saveFreq,
+                fileHandler.saveData("resources/mision_a_marte/distances", (double) i / saveFreq,
                         earth.distanceToParticle(mars));
             }
+        }
+    }
+
+    public void spawnShuttle(){
+        Particle sun = objects.stream().filter(p -> p.getId() == 0).findFirst().get();
+        Particle earth = objects.stream().filter(p -> p.getId() == 1).findFirst().get();
+        double[] velVersor = earth.velocityVersor();
+        //invertir el versor normal para obtener la posición de despegue de la nave
+        velVersor[1] *= -1;
+        double d = spaceStationHeight + earth.getRadius();
+        double angle = sun.angleBetweenParticle(earth);
+        double xpos = earth.getX() + Math.cos(angle) * d;
+        double ypos = earth.getY() + Math.sin(angle) * d;
+        double vx = velVersor[0] * (launchSpeed + spaceStationOrbitalSpeed + earth.getVx());
+        double vy = earth.getVy();
+        double radius = 100;
+        double mass = 5 * Math.pow(10, 5);
+        spaceShuttle = new Particle(3,  xpos, ypos, vx, vy, radius, mass, 0.0);
+        objects.add(spaceShuttle);
+    }
+
+    public void sendShuttle(double iterations){
+        Particle earth = objects.stream().filter(p -> p.getId() == 1).findFirst().get();
+        Particle mars = objects.stream().filter(p -> p.getId() == 2).findFirst().get();
+        int stepsToLaunch = 8 * saveFreq;
+        //esperar a que llegue
+        for(long i = 0; i < stepsToLaunch; i++){
+            evolveSystem();
+            if(i % saveFreq == 0) fileHandler.savePositionIndexed(objects, "viaje", i / saveFreq);
+        }
+        spawnShuttle();
+        for(long i = 9 * saveFreq; i < (iterations / deltaT); i ++){
+            evolveSystem();
+            if(i % saveFreq == 0) fileHandler.savePositionIndexed(objects, "viaje", i / saveFreq);
         }
     }
 

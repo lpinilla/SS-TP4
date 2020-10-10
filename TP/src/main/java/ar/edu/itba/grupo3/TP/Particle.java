@@ -179,6 +179,11 @@ public class Particle implements Comparable<Particle> {
         return Math.sqrt(this.vx*this.vx+this.vy*this.vy);
     }
 
+    public double[] velocityVersor(){
+        double speed = realSpeed();
+        return new double[] { (vx / speed), (vy / speed)};
+    }
+
     public void setX(double x){
         this.prevX = this.getX();
         this.x = x;
