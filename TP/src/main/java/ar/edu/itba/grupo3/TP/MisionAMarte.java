@@ -163,17 +163,23 @@ public class MisionAMarte {
     }
 
     public void sendShuttle(Particle mars, int daysToLaunch, double iterations){
-        int stepsToLaunch = daysToLaunch * saveFreq;
         //esperar daysToLaunch días hasta el despegue
-        for(long i = 0; i < stepsToLaunch; i++) evolveSystem();
-        spawnShuttle();
-        for(long i = (daysToLaunch + 1) * saveFreq; i < (iterations / deltaT); i++){
+        for(long i = 0; i < daysToLaunch * saveFreq; i++){
             evolveSystem();
             if(i % saveFreq == 0){
+                fileHandler.savePositionIndexed(objects, "viajes/" + daysToLaunch + "-journey", i / saveFreq);
+            }
+        }
+        spawnShuttle();
+        for(long i = daysToLaunch * saveFreq; i < (iterations / deltaT); i++){
+            evolveSystem();
+            if(i % saveFreq == 0){
+                fileHandler.savePositionIndexed(objects, "viajes/" + daysToLaunch + "-journey", i /saveFreq);
                 fileHandler.saveData("viajes/"+daysToLaunch+"-day.tsv",
                         (double)i / saveFreq, spaceShuttle.distanceToParticle(mars));
             }
         }
+        objects.remove(spaceShuttle);
     }
 
     public void recordFlightVelocities(double iterations){
