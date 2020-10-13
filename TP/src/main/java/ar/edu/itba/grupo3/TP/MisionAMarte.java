@@ -10,7 +10,7 @@ public class MisionAMarte {
     //masas en 10^24
     private final double spaceStationHeight = 1500 * Math.pow(10, 3); // m
     private final double spaceStationOrbitalSpeed = 7.12 * Math.pow(10, 3); // m /s
-    private final double launchSpeed = 8 * Math.pow(10, 3); // m / s
+    private final double launchSpeed = 8.0 * Math.pow(10, 3); // m / s
     private final double gravitationalConstant =  6.67408 * Math.pow(10,-11); // m^3 / (kg * s^2)
     private double deltaT;
     private FileHandler fileHandler;
@@ -30,71 +30,53 @@ public class MisionAMarte {
                 696000 * Math.pow(10,3), 1988500.0 * Math.pow(10,24), 0.0));
         //earth
         //fecha del tp
-        this.objects.add(new Particle(1, 1.493188929636662 * Math.pow(10,11), 1.318936357931255* Math.pow(10,10),
-                -3.113279917782445 * Math.pow(10,3),2.955205189256462 * Math.pow(10,4),
-                6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
-        //1ero de junio 2020
-        //this.objects.add(new Particle(1, -5.014824835036334 * Math.pow(10,10), -1.431715570585378 * Math.pow(10,11),
-        //        2.762681880274097 * Math.pow(10,4) ,-9.946939080083073 * Math.pow(10,3),
+        //this.objects.add(new Particle(1, 1.493188929636662 * Math.pow(10,11), 1.318936357931255* Math.pow(10,10),
+        //        -3.113279917782445 * Math.pow(10,3),2.955205189256462 * Math.pow(10,4),
         //        6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
+        //1ero de junio 2020
+        this.objects.add(new Particle(1, -5.014824835036334 * Math.pow(10,10), -1.431715570585378 * Math.pow(10,11),
+                2.762681880274097 * Math.pow(10,4) ,-9.946939080083073 * Math.pow(10,3),
+                6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
         //mars
-        this.objects.add(new Particle(2, 2.059448551842169* Math.pow(10,11), 4.023977946528339* Math.pow(10,10),
-                -3.717406842095575* Math.pow(10,3), 2.584914078301731 * Math.pow(10,4),
-                3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
-        //this.objects.add(new Particle(2, 9.368383080176222 * Math.pow(10,10), -1.887390255355240 * Math.pow(10,11),
-        //        2.261977282742894 * Math.pow(10,4), 1.285278029310825 * Math.pow(10,4),
+        //this.objects.add(new Particle(2, 2.059448551842169* Math.pow(10,11), 4.023977946528339* Math.pow(10,10),
+        //        -3.717406842095575* Math.pow(10,3), 2.584914078301731 * Math.pow(10,4),
         //        3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
+        this.objects.add(new Particle(2, 9.368383080176222 * Math.pow(10,10), -1.887390255355240 * Math.pow(10,11),
+                2.261977282742894 * Math.pow(10,4), 1.285278029310825 * Math.pow(10,4),
+                3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
         this.deltaT = deltaT;
         this.saveFreq = saveFreq;
         this.fileHandler = new FileHandler("resources/mision_a_marte");
     }
 
-
+    //calcular la fuerza resultante entre este objeto y todos los demás
     public double[] calculateForces(Particle p, List<Particle> p2){
         double[] ret = new double[] {0.0, 0.0};
-        double dist, normal, theta;
+        double dist, normal;
         for (Particle par : p2){
             if(p.equals(par)) continue;
             dist = p.distanceToParticle(par);
-            normal = gravitationalConstant * (p.getMass() * par.getMass() / (dist * dist));
-            //theta = p.angleBetweenParticle(par);
-            //ret[0] += normal * Math.cos(theta);
-            //ret[1] += normal * Math.sin(theta);
-            ret[0] += normal * ( (par.getX() - p.getX()) / dist);
-            ret[1] += normal * ((par.getY() - p.getY()) / dist);
+            normal = gravitationalConstant * p.getMass() * par.getMass() / (dist * dist);
+            ret[0] += normal * (par.getX() - p.getX()) / dist;
+            ret[1] += normal * (par.getY() - p.getY()) / dist;
         }
         return ret;
     }
 
     public void calculateAccelerations(){
-        List<Particle> aux = new ArrayList<>(objects);
         for(Particle p : objects){
-            //eliminar al objeto de la lista
-            //aux.remove(p);
-            //calcular la fuerza resultante entre este objeto y todos los demás
-            double[] forces = calculateForces(p, aux);
+            double[] forces = calculateForces(p, objects);
             p.setAx(forces[0] / p.getMass());
             p.setAy(forces[1] / p.getMass());
-            //volver a agregar al objeto a la lista
-            //aux.add(p);
         }
-        //objects.sort(Comparator.comparing(Particle::getId));
     }
 
-
     public void calculateFutureAccelerations(){
-        List<Particle> aux = new ArrayList<>(objects);
         for(Particle p : objects){
-            //eliminar al objeto de la lista
-            //aux.remove(p);
-            //calcular la fuerza resultante entre este objeto y todos los demás
-            double[] forces = calculateForces(p, aux);
+            double[] forces = calculateForces(p, objects);
             p.setFutAx(forces[0] / p.getMass());
             p.setFutAy(forces[1] / p.getMass());
-            //volver a agregar al objeto a la lista
-            //aux.add(p);
         }
-        //objects.sort(Comparator.comparing(Particle::getId));
     }
 
     public void moveObjects(){
@@ -113,22 +95,17 @@ public class MisionAMarte {
         for(Particle p : objects){
             double[] pred_vxs = new double[2];
             pred_vxs[0] = p.getVx() + ( (3.0/2) * p.getAx() - (1.0/2) * p.getPrevAx()) * deltaT;
-            //p.setVx(aux);
             pred_vxs[1] = p.getVy() + ( (3.0/2) * p.getAy() - (1.0/2) * p.getPrevAy()) * deltaT;
-            //p.setVy(aux);
             aux.add(pred_vxs);
         }
         return aux;
     }
 
     public void calculateCorrectedVelocities(List<double[]> predicted){
-        double aux;
         for(int i = 0; i < predicted.size(); i++){
             Particle p = objects.get(i);
-            aux = p.getVx() + ( (1.0/3) * p.getFutAx() + (5.0/6) * p.getAx() - (1.0/6) * p.getPrevAx()) * deltaT;
-            p.setVx(aux);
-            aux = p.getVy() + ( (1.0/3) * p.getFutAy() + (5.0/6) * p.getAy() - (1.0/6) * p.getPrevAy()) * deltaT;
-            p.setVy(aux);
+            p.setVx(p.getVx() + ( (1d/3) * p.getFutAx() + (5d/6) * p.getAx() - (1d/6) * p.getPrevAx()) * deltaT);
+            p.setVy(p.getVy() + ( (1d/3) * p.getFutAy() + (5d/6) * p.getAy() - (1d/6) * p.getPrevAy()) * deltaT);
         }
     }
 
@@ -164,37 +141,54 @@ public class MisionAMarte {
         }
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void spawnShuttle(){
         Particle sun = objects.stream().filter(p -> p.getId() == 0).findFirst().get();
         Particle earth = objects.stream().filter(p -> p.getId() == 1).findFirst().get();
-        double[] velVersor = earth.velocityVersor();
-        //invertir el versor normal para obtener la posición de despegue de la nave
-        velVersor[1] *= -1;
         double d = spaceStationHeight + earth.getRadius();
         double angle = sun.angleBetweenParticle(earth);
         double xpos = earth.getX() + Math.cos(angle) * d;
         double ypos = earth.getY() + Math.sin(angle) * d;
         double vx = earth.getVx() + Math.cos(angle) * (launchSpeed + spaceStationOrbitalSpeed);
-        double vy = earth.getVy()+ Math.sin(angle) * (launchSpeed + spaceStationOrbitalSpeed);
+        double vy = earth.getVy() + Math.sin(angle) * (launchSpeed + spaceStationOrbitalSpeed);
         double radius = 100;
         double mass = 5 * Math.pow(10, 5);
         spaceShuttle = new Particle(3,  xpos, ypos, vx, vy, radius, mass, 0.0);
         objects.add(spaceShuttle);
     }
 
-    public void sendShuttle(double iterations){
-        Particle earth = objects.stream().filter(p -> p.getId() == 1).findFirst().get();
+    public void findBestDayToLaunch(int maxDays, double iterations){
         Particle mars = objects.stream().filter(p -> p.getId() == 2).findFirst().get();
+        for(int i = 0; i < maxDays; i++) sendShuttle(mars, i, iterations);
+    }
+
+    public void sendShuttle(Particle mars, int daysToLaunch, double iterations){
+        int stepsToLaunch = daysToLaunch * saveFreq;
+        //esperar daysToLaunch días hasta el despegue
+        for(long i = 0; i < stepsToLaunch; i++) evolveSystem();
+        spawnShuttle();
+        for(long i = (daysToLaunch + 1) * saveFreq; i < (iterations / deltaT); i++){
+            evolveSystem();
+            if(i % saveFreq == 0){
+                fileHandler.saveData("viajes/"+daysToLaunch+"-day.tsv",
+                        (double)i / saveFreq, spaceShuttle.distanceToParticle(mars));
+            }
+        }
+    }
+
+    public void recordFlightVelocities(double iterations){
         int stepsToLaunch = 8 * saveFreq;
         //esperar a que llegue
-        for(long i = 0; i < stepsToLaunch; i++){
-            evolveSystem();
-            if(i % saveFreq == 0) fileHandler.savePositionIndexed(objects, "viaje", i / saveFreq);
-        }
+        for(long i = 0; i < stepsToLaunch; i++) evolveSystem();
+        //spawnear la nave
         spawnShuttle();
+        List<Particle> aux = new ArrayList<>();
+        //agregar la nave a la lista de objetos
+        aux.add(spaceShuttle);
+        //evolucionar el sistema con el resto del tiempo
         for(long i = 9 * saveFreq; i < (iterations / deltaT); i ++){
             evolveSystem();
-            if(i % saveFreq == 0) fileHandler.savePositionIndexed(objects, "viaje", i / saveFreq);
+            if(i % saveFreq == 0) fileHandler.saveVelocity(aux);
         }
     }
 
