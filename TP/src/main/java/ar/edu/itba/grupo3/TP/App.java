@@ -9,7 +9,7 @@ public class App
         MisionAMarte misionAMarte = new MisionAMarte(120.0, 720);
         //misionAMarte.runSimulation(3.154 * Math.pow(10,7));
         //misionAMarte.findBestDate(1.577 * Math.pow(10,7));
-        misionAMarte.findBestDayToLaunch(100, 1.577 * Math.pow(10,7));
+        misionAMarte.findBestDayToLaunch(730, 1.577 * Math.pow(10,7));
         //misionAMarte.sendShuttle(2 * Math.pow(10,8));
         //misionAMarte.recordFlightVelocities(1.577 * Math.pow(10,7));
     }

@@ -7,3 +7,6 @@ target
 *.class
 *.iml
 TP.iml
+resources/mision_a_marte/viajes/*
+resources/mision_a_marte/viajes/
+*.tsv

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class MisionAMarte {
 
@@ -30,20 +31,20 @@ public class MisionAMarte {
                 696000 * Math.pow(10,3), 1988500.0 * Math.pow(10,24), 0.0));
         //earth
         //fecha del tp
-        //this.objects.add(new Particle(1, 1.493188929636662 * Math.pow(10,11), 1.318936357931255* Math.pow(10,10),
-        //        -3.113279917782445 * Math.pow(10,3),2.955205189256462 * Math.pow(10,4),
-        //        6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
-        //1ero de junio 2020
-        this.objects.add(new Particle(1, -5.014824835036334 * Math.pow(10,10), -1.431715570585378 * Math.pow(10,11),
-                2.762681880274097 * Math.pow(10,4) ,-9.946939080083073 * Math.pow(10,3),
+        this.objects.add(new Particle(1, 1.493188929636662 * Math.pow(10,11), 1.318936357931255* Math.pow(10,10),
+                -3.113279917782445 * Math.pow(10,3),2.955205189256462 * Math.pow(10,4),
                 6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
+        //1ero de junio 2020
+        //this.objects.add(new Particle(1, -5.014824835036334 * Math.pow(10,10), -1.431715570585378 * Math.pow(10,11),
+        //        2.762681880274097 * Math.pow(10,4) ,-9.946939080083073 * Math.pow(10,3),
+        //        6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
         //mars
-        //this.objects.add(new Particle(2, 2.059448551842169* Math.pow(10,11), 4.023977946528339* Math.pow(10,10),
-        //        -3.717406842095575* Math.pow(10,3), 2.584914078301731 * Math.pow(10,4),
-        //        3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
-        this.objects.add(new Particle(2, 9.368383080176222 * Math.pow(10,10), -1.887390255355240 * Math.pow(10,11),
-                2.261977282742894 * Math.pow(10,4), 1.285278029310825 * Math.pow(10,4),
+        this.objects.add(new Particle(2, 2.059448551842169* Math.pow(10,11), 4.023977946528339* Math.pow(10,10),
+                -3.717406842095575* Math.pow(10,3), 2.584914078301731 * Math.pow(10,4),
                 3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
+        //this.objects.add(new Particle(2, 9.368383080176222 * Math.pow(10,10), -1.887390255355240 * Math.pow(10,11),
+        //        2.261977282742894 * Math.pow(10,4), 1.285278029310825 * Math.pow(10,4),
+        //        3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
         this.deltaT = deltaT;
         this.saveFreq = saveFreq;
         this.fileHandler = new FileHandler("resources/mision_a_marte");
@@ -159,7 +160,7 @@ public class MisionAMarte {
 
     public void findBestDayToLaunch(int maxDays, double iterations){
         Particle mars = objects.stream().filter(p -> p.getId() == 2).findFirst().get();
-        for(int i = 0; i < maxDays; i++) sendShuttle(mars, i, iterations);
+        IntStream.range(0, maxDays).forEach(i -> sendShuttle(mars, i, iterations));
     }
 
     public void sendShuttle(Particle mars, int daysToLaunch, double iterations){
@@ -171,10 +172,12 @@ public class MisionAMarte {
             }
         }
         spawnShuttle();
-        for(long i = daysToLaunch * saveFreq; i < (iterations / deltaT); i++){
+        for(long i = 0; i < (iterations / deltaT); i++){
             evolveSystem();
             if(i % saveFreq == 0){
-                fileHandler.savePositionIndexed(objects, "viajes/" + daysToLaunch + "-journey", i /saveFreq);
+                fileHandler.savePositionIndexed(objects,
+                        "viajes/" + daysToLaunch + "-journey",
+                        (i + daysToLaunch * saveFreq) /saveFreq);
                 fileHandler.saveData("viajes/"+daysToLaunch+"-day.tsv",
                         (double)i / saveFreq, spaceShuttle.distanceToParticle(mars));
             }
