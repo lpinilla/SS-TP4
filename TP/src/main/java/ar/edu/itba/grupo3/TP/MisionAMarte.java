@@ -48,6 +48,17 @@ public class MisionAMarte {
                         1.440720082952704 * Math.pow(10,4), -1.804659323598330 * Math.pow(10,4),
                         3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
                 break;
+            //2/1/20
+            case "enero2":
+                //tierra
+                this.objects.add(new Particle(1,  -2.745980229220612 * Math.pow(10,10), 1.445097591346515* Math.pow(10,11),
+                        -2.975208159467520 * Math.pow(10,4),-5.684204848406660 * Math.pow(10,3),
+                        6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
+                //marte
+                this.objects.add(new Particle(2, -1.962332428065216 * Math.pow(10,11), -1.340617546911285 * Math.pow(10,11),
+                        1.457517951128304 * Math.pow(10,4), -1.793286938216979 * Math.pow(10,4),
+                        3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
+                break;
             //1/6/20
             case "junio":
                 //tierra
