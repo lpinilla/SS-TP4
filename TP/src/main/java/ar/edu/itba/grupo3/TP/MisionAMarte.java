@@ -270,10 +270,10 @@ public class MisionAMarte {
             double originalY = earth.getY();
             //evolucionar el sistema 1 día
             evolveSystem();
-            double xDiff = 1/2d *  Math.pow(earth.getX() - originalX, 2);
-            double yDiff = 1/2d * Math.pow(earth.getY() - originalY, 2);
-            double diff = xDiff + yDiff;
-            fileHandler.saveData("deltaTDiffs.tsv", i, diff);
+            double xDiff = Math.pow(earth.getX() - originalX, 2);
+            double yDiff = Math.pow(earth.getY() - originalY, 2);
+            double diff = 1/2d * Math.sqrt(xDiff + yDiff);
+            fileHandler.saveData("deltaTDiffs2.tsv", i, diff);
         }
     }
 
