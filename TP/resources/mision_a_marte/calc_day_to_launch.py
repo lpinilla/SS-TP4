@@ -11,11 +11,14 @@ def load_data(file_index):
 global_min = 1e20
 file_idx = -1
 
-for file in range(730):
+f = open('min_distance_per_day.tsv', 'w')
+for file in range(365):
     min_val = min(load_data(file))
+    string = str(file) + '    ' + str(min_val) + '\n'
+    f.write(string)
     if min_val < global_min:
         global_min = min_val
         file_idx = file
-
-print("File: ", file_idx)
-print("Global Min Value: ", '%.2E' % Decimal(global_min))
+f.close()
+print('File: ', file_idx)
+print('Global Min Value: ', '%.2E' % Decimal(global_min))

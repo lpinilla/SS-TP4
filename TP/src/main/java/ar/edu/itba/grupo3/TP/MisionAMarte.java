@@ -12,7 +12,7 @@ public class MisionAMarte {
     private final double spaceStationHeight = 1500 * Math.pow(10, 3); // m
     private final double spaceStationOrbitalSpeed = 7.12 * Math.pow(10, 3); // m /s
     private final double launchSpeed = 8.0 * Math.pow(10, 3); // m / s
-    private final double gravitationalConstant =  6.67408 * Math.pow(10,-11); // m^3 / (kg * s^2)
+    private final double gravitationalConstant =  6.693 * Math.pow(10,-11); // m^3 / (kg * s^2)
     private double deltaT;
     private FileHandler fileHandler;
 
@@ -23,31 +23,54 @@ public class MisionAMarte {
 
     private int saveFreq;
 
-    public MisionAMarte(double deltaT, int saveFreq){
+    public MisionAMarte(String startingMonth, double deltaT, int saveFreq){
         //sun
         this.objects = new ArrayList<>();
-        this.objects.add(new Particle(0, 0.0, 0.0,
-                0.0, 0.0,
-                696000 * Math.pow(10,3), 1988500.0 * Math.pow(10,24), 0.0));
-        //earth
-        //fecha del tp
-        this.objects.add(new Particle(1, 1.493188929636662 * Math.pow(10,11), 1.318936357931255* Math.pow(10,10),
-                -3.113279917782445 * Math.pow(10,3),2.955205189256462 * Math.pow(10,4),
-                6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
-        //1ero de junio 2020
-        //this.objects.add(new Particle(1, -5.014824835036334 * Math.pow(10,10), -1.431715570585378 * Math.pow(10,11),
-        //        2.762681880274097 * Math.pow(10,4) ,-9.946939080083073 * Math.pow(10,3),
-        //        6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
-        //mars
-        this.objects.add(new Particle(2, 2.059448551842169* Math.pow(10,11), 4.023977946528339* Math.pow(10,10),
-                -3.717406842095575* Math.pow(10,3), 2.584914078301731 * Math.pow(10,4),
-                3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
-        //this.objects.add(new Particle(2, 9.368383080176222 * Math.pow(10,10), -1.887390255355240 * Math.pow(10,11),
-        //        2.261977282742894 * Math.pow(10,4), 1.285278029310825 * Math.pow(10,4),
-        //        3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
+        selectStartingMonth(startingMonth);
         this.deltaT = deltaT;
         this.saveFreq = saveFreq;
         this.fileHandler = new FileHandler("resources/mision_a_marte");
+    }
+
+    public void selectStartingMonth(String month) {
+        this.objects.add(new Particle(0, 0.0, 0.0,
+                0.0, 0.0,
+                696000 * Math.pow(10,3), 1988500.0 * Math.pow(10,24), 0.0));
+        switch (month){
+            //1/1/20
+            case "enero":
+                //tierra
+                this.objects.add(new Particle(1, -2.488497169862896 * Math.pow(10,10), 1.449783471212823* Math.pow(10,11),
+                        -2.984892046591452 * Math.pow(10,4),-5.162374739569864 * Math.pow(10,3),
+                        6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
+                //marte
+                this.objects.add(new Particle(2, -1.974852867957307 * Math.pow(10,11), -1.325074306424199 * Math.pow(10,11),
+                        1.440720082952704 * Math.pow(10,4), -1.804659323598330 * Math.pow(10,4),
+                        3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
+                break;
+            //1/6/20
+            case "junio":
+                //tierra
+                this.objects.add(new Particle(1, -5.014824835036334 * Math.pow(10,10), -1.431715570585378 * Math.pow(10,11),
+                        2.762681880274097 * Math.pow(10,4) ,-9.946939080083073 * Math.pow(10,3),
+                        6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
+                //marte
+                this.objects.add(new Particle(2, 9.368383080176222 * Math.pow(10,10), -1.887390255355240 * Math.pow(10,11),
+                        2.261977282742894 * Math.pow(10,4), 1.285278029310825 * Math.pow(10,4),
+                        3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
+                break;
+            //28/9/20
+            case "septiembre":
+                //earth
+                this.objects.add(new Particle(1, 1.493188929636662 * Math.pow(10,11), 1.318936357931255* Math.pow(10,10),
+                        -3.113279917782445 * Math.pow(10,3),2.955205189256462 * Math.pow(10,4),
+                        6378.137 * Math.pow(10, 3), 5.97219 * Math.pow(10, 24), 0.0));
+                //mars
+                this.objects.add(new Particle(2, 2.059448551842169* Math.pow(10,11), 4.023977946528339* Math.pow(10,10),
+                        -3.717406842095575* Math.pow(10,3), 2.584914078301731 * Math.pow(10,4),
+                        3389.92 * Math.pow(10, 3), 6.4171 * Math.pow(10, 24), 0.0));
+                break;
+        }
     }
 
     //calcular la fuerza resultante entre este objeto y todos los demás
@@ -94,10 +117,10 @@ public class MisionAMarte {
     public List<double[]> calculatePredictedVelocities(){
         List<double[]> aux = new ArrayList<>();
         for(Particle p : objects){
-            double[] pred_vxs = new double[2];
-            pred_vxs[0] = p.getVx() + ( (3.0/2) * p.getAx() - (1.0/2) * p.getPrevAx()) * deltaT;
-            pred_vxs[1] = p.getVy() + ( (3.0/2) * p.getAy() - (1.0/2) * p.getPrevAy()) * deltaT;
-            aux.add(pred_vxs);
+            double[] pred_vs = new double[2];
+            pred_vs[0] = p.getVx() + ( (3.0/2) * p.getAx() - (1.0/2) * p.getPrevAx()) * deltaT;
+            pred_vs[1] = p.getVy() + ( (3.0/2) * p.getAy() - (1.0/2) * p.getPrevAy()) * deltaT;
+            aux.add(pred_vs);
         }
         return aux;
     }
@@ -123,8 +146,8 @@ public class MisionAMarte {
         calculateCorrectedVelocities(predicted);
     }
 
-    public void runSimulation(double iterations){
-        for(long i = 0; i < (iterations / deltaT); i++){
+    public void runSimulation(double totalTime){
+        for(long i = 0; i < (totalTime / deltaT); i++){
             evolveSystem();
             if(i % saveFreq == 0) fileHandler.savePositionIndexed(objects, "test_run", i);
         }
@@ -158,47 +181,70 @@ public class MisionAMarte {
         objects.add(spaceShuttle);
     }
 
-    public void findBestDayToLaunch(int maxDays, double iterations){
-        Particle mars = objects.stream().filter(p -> p.getId() == 2).findFirst().get();
-        IntStream.range(0, maxDays).forEach(i -> sendShuttle(mars, i, iterations));
+    public void findBestDayToLaunch(String startingMonth, int maxDays, double iterations){
+        IntStream.range(0, maxDays).forEach(i -> sendShuttle(startingMonth, i, iterations));
     }
 
-    public void sendShuttle(Particle mars, int daysToLaunch, double iterations){
+    public void sendShuttle(String startingMonth, int daysToLaunch, double totalTime){
+        objects.clear();
+        selectStartingMonth(startingMonth);
+        Particle mars = objects.stream().filter(p -> p.getId() == 2).findFirst().get();
         //esperar daysToLaunch días hasta el despegue
         for(long i = 0; i < daysToLaunch * saveFreq; i++){
             evolveSystem();
             if(i % saveFreq == 0){
-                fileHandler.savePositionIndexed(objects, "viajes/" + daysToLaunch + "-journey", i / saveFreq);
+                fileHandler.savePositionIndexed(objects,
+                        "viajes/" + daysToLaunch + "-journey", i / saveFreq);
             }
         }
         spawnShuttle();
-        for(long i = 0; i < (iterations / deltaT); i++){
+        for(long i = 0; i < (totalTime / deltaT); i++){
             evolveSystem();
             if(i % saveFreq == 0){
                 fileHandler.savePositionIndexed(objects,
-                        "viajes/" + daysToLaunch + "-journey",
-                        (i + daysToLaunch * saveFreq) /saveFreq);
-                fileHandler.saveData("viajes/"+daysToLaunch+"-day.tsv",
+                        "viajes/" + daysToLaunch + "-journey", (i + daysToLaunch * saveFreq) /saveFreq);
+                fileHandler.saveData("viajes/" + daysToLaunch + "-day.tsv",
                         (double)i / saveFreq, spaceShuttle.distanceToParticle(mars));
             }
         }
-        objects.remove(spaceShuttle);
     }
 
-    public void recordFlightVelocities(double iterations){
-        int stepsToLaunch = 8 * saveFreq;
-        //esperar a que llegue
+    public void recordFlightSpeed(long launchDay, double iterations){
+        long stepsToLaunch = launchDay * saveFreq;
+        //avanzar el sistema hasta el día de despegue
         for(long i = 0; i < stepsToLaunch; i++) evolveSystem();
         //spawnear la nave
         spawnShuttle();
+        //crear lista auxiliar para poder imprimir
         List<Particle> aux = new ArrayList<>();
         //agregar la nave a la lista de objetos
         aux.add(spaceShuttle);
         //evolucionar el sistema con el resto del tiempo
-        for(long i = 9 * saveFreq; i < (iterations / deltaT); i ++){
+        for(long i = launchDay; i < (iterations / deltaT); i ++){
             evolveSystem();
-            if(i % saveFreq == 0) fileHandler.saveVelocity(aux);
+            if(i % saveFreq == 0)fileHandler.saveSpeed(aux);
         }
     }
+
+
+    public void recordFlightVelocity(long daysToLaunch, double iterations){
+        long stepsToLaunch = daysToLaunch * saveFreq;
+        //avanzar el sistema hasta el día de despegue
+        for(long i = 0; i < stepsToLaunch; i++) evolveSystem();
+        //spawnear la nave
+        spawnShuttle();
+        //crear lista auxiliar para poder imprimir
+        List<Particle> aux = new ArrayList<>();
+        //agregar la nave a la lista de objetos
+        aux.add(spaceShuttle);
+        //evolucionar el sistema con el resto del tiempo
+        for(long i = daysToLaunch; i < (iterations / deltaT); i++){
+            evolveSystem();
+            if(i % saveFreq == 0){
+                fileHandler.saveVelocity(aux, "vec_velocidades");
+            }
+        }
+    }
+
 
 }

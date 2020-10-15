@@ -139,7 +139,7 @@ public class FileHandler {
             for(Particle p : particles){
                 String builder =
                         String.format(Locale.US, "%6.7e", p.getX()) + "    " +
-                                String.format(Locale.US, "%6.7e", p.getY());
+                        String.format(Locale.US, "%6.7e", p.getY());
                 writer.write(builder);
                 writer.newLine();
             }
@@ -150,9 +150,48 @@ public class FileHandler {
         }
     }
 
-    public void saveVelocity(List<Particle> l ){
+
+    public void saveVelocity(List<Particle> particles, String filename){
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(velocity), true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(
+                    new File(basePath + "/" + filename + ".tsv"), true));
+            for(Particle p : particles){
+                String builder = String.format(Locale.US, "%6.7e", p.getVx()) + "    " +
+                        String.format(Locale.US, "%6.7e", p.getVy());
+                writer.write(builder);
+                writer.newLine();
+            }
+            writer.flush();
+            writer.close();
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    public void saveVelocityIndexed(List<Particle> particles, String filename, long i){
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter(
+                    new File(basePath + "/" + filename + ".tsv"), true));
+            writer.write(String.valueOf(i));
+            writer.newLine();
+            for(Particle p : particles){
+                String builder = String.format(Locale.US, "%6.7e", p.getVx()) + "    " +
+                                 String.format(Locale.US, "%6.7e", p.getVy());
+                writer.write(builder);
+                writer.newLine();
+            }
+            writer.flush();
+            writer.close();
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void saveSpeed(List<Particle> l ){
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter(
+                    new File(basePath + "/" + velocity + ".tsv"), true));
             for(Particle p:l){
                 writer.write(String.format(Locale.US, "%6.7e", (p.realSpeed())));
                 writer.newLine();
@@ -166,7 +205,8 @@ public class FileHandler {
 
     public void saveData(String file, double idx, double data){
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File( basePath + "/" + file), true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(
+                    new File( basePath + "/" + file), true));
             String str = idx + "    " + String.format(Locale.US, "%6.7e", data);
             writer.write(str);
             writer.newLine();
