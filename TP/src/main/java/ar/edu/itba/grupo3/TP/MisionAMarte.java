@@ -170,7 +170,7 @@ public class MisionAMarte {
         for(long i = 0; i < (iterations / deltaT); i++){
             evolveSystem();
             if(i % saveFreq == 0){
-                fileHandler.saveData("resources/mision_a_marte/distances", (double) i / saveFreq,
+                fileHandler.saveData("distances", (double) i / saveFreq,
                         earth.distanceToParticle(mars));
             }
         }

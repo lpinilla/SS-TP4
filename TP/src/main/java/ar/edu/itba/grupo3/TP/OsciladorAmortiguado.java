@@ -110,15 +110,15 @@ public class OsciladorAmortiguado {
         return predictions;
     }
 
-    public void runAll(){
-        runAnalytic();
-        runEuler();
-        runBeeman();
-        runGear();
+    public void runAll(int i){
+        runAnalytic(i);
+        runEuler(i);
+        runBeeman(i);
+        runGear(i);
     }
 
 
-    public void runAnalytic(){
+    public void runAnalytic(int i){
         double amplitud = 1.0;
         List<Particle> particleList = new ArrayList<>();
         Particle p = new Particle(0, 1.0,0.0,
@@ -127,13 +127,13 @@ public class OsciladorAmortiguado {
         particleList.add(p);
         double mass = p.getMass();
         for(int t = 0; t < (this.totalTime / deltaT); t++){
-            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "analytic");
+            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "analytic",i);
             p.setX(analytic(amplitud, mass, t * deltaT));
         }
     }
 
 
-    public void runEuler(){
+    public void runEuler(int i){
         double amplitud = 1.0;
         List<Particle> particleList = new ArrayList<>();
         Particle p = new Particle(0, 1.0,0.0,
@@ -141,7 +141,7 @@ public class OsciladorAmortiguado {
                 0.0, 70.0, 0.0);
         particleList.add(p);
         for(int t = 0; t < (this.totalTime / deltaT); t++){
-            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "euler");
+            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "euler",i);
             Double[] prediction = predictEuler(p);
             p.setX(prediction[0]);
             p.setVx((prediction[1]));
@@ -149,7 +149,7 @@ public class OsciladorAmortiguado {
     }
 
 
-    public void runBeeman(){
+    public void runBeeman(int i){
         double amplitud = 1.0;
         List<Particle> particleList = new ArrayList<>();
         Particle p = new Particle(0, 1.0,0.0,
@@ -157,7 +157,7 @@ public class OsciladorAmortiguado {
                 0.0, 70.0, 0.0);
         particleList.add(p);
         for(int t = 0; t < (this.totalTime / deltaT); t++){
-            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "beeman");
+            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "beeman",i);
             Double[] prediction = predictBeeman(p);
             p.setX(prediction[0]);
             p.setVx((prediction[1]));
@@ -165,7 +165,7 @@ public class OsciladorAmortiguado {
     }
 
 
-    public void runGear(){
+    public void runGear(int i){
         double amplitud = 1.0;
         List<Particle> particleList = new ArrayList<>();
         Particle p = new Particle(0, 1.0,0.0,
@@ -174,7 +174,7 @@ public class OsciladorAmortiguado {
         particleList.add(p);
         Double[] prediction = calculateInitialDerivs(p, 5);
         for(int t = 0; t < (this.totalTime / deltaT); t++){
-            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "gearPredictorCorrector");
+            if(t % saveFactor == 0) fileHandler.savePosition(particleList, "gearPredictorCorrector",i);
             prediction = gearPredictor(prediction, p);
             p.setX(prediction[0]);
             p.setVx((prediction[1]));

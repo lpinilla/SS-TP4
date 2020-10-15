@@ -111,14 +111,15 @@ public class FileHandler {
         }
     }
 
-    public void savePosition(List<Particle> particles, String filename){
+    public void savePosition(List<Particle> particles, String filename,int i){
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(
-                    new File(basePath + "/" + filename + ".tsv"), true));
+                    new File(basePath + "/" + filename +"_"+i+ ".tsv"), true));
+
             for(Particle p : particles){
                 String builder =
-                        String.format(Locale.US, "%6.7e", p.getX()) + "    " +
-                        String.format(Locale.US, "%6.7e", p.getY()) + "    ";
+                        String.format(Locale.US, "%6.20e", p.getX()) + "    " +
+                        String.format(Locale.US, "%6.20e", p.getY()) + "    ";
                 writer.write(builder);
                 writer.newLine();
             }
@@ -134,12 +135,16 @@ public class FileHandler {
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(
                     new File(basePath + "/" + filename + ".tsv"), true));
+            writer.write("4");
+            writer.newLine();
             writer.write(String.valueOf(i));
             writer.newLine();
+            //id=0 -> sol ? id=1 -> tierra? id=2 -> marte?
+
             for(Particle p : particles){
                 String builder =
                         String.format(Locale.US, "%6.7e", p.getX()) + "    " +
-                        String.format(Locale.US, "%6.7e", p.getY());
+                                String.format(Locale.US, "%6.7e", p.getY())+"    "+((6.9600000e+08)*(10-p.getId()))+"    "+p.getId();
                 writer.write(builder);
                 writer.newLine();
             }
