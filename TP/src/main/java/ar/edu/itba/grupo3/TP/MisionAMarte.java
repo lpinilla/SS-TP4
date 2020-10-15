@@ -11,7 +11,7 @@ public class MisionAMarte {
     //masas en 10^24
     private final double spaceStationHeight = 1500 * Math.pow(10, 3); // m
     private final double spaceStationOrbitalSpeed = 7.12 * Math.pow(10, 3); // m /s
-    private final double launchSpeed = 8.0 * Math.pow(10, 3); // m / s
+    private double launchSpeed; // m / s
     private final double gravitationalConstant =  6.693 * Math.pow(10,-11); // m^3 / (kg * s^2)
     private double deltaT;
     private FileHandler fileHandler;
@@ -23,13 +23,14 @@ public class MisionAMarte {
 
     private int saveFreq;
 
-    public MisionAMarte(String startingMonth, double deltaT, int saveFreq){
+    public MisionAMarte(String startingMonth, double deltaT, int saveFreq, double launchSpeed){
         //sun
         this.objects = new ArrayList<>();
         selectStartingMonth(startingMonth);
         this.deltaT = deltaT;
         this.saveFreq = saveFreq;
         this.fileHandler = new FileHandler("resources/mision_a_marte");
+        this.launchSpeed = launchSpeed;
     }
 
     public void selectStartingMonth(String month) {
@@ -254,6 +255,25 @@ public class MisionAMarte {
             if(i % saveFreq == 0){
                 fileHandler.saveVelocity(aux, "vec_velocidades");
             }
+        }
+    }
+
+    public void findDeltaT(int max, int step){
+        for(int i = 0; i < max; i+= step){
+            this.deltaT = i;
+            //limpiar el sistema
+            objects.clear();
+            //cargar el sistema en 1/1/20
+            selectStartingMonth("enero");
+            Particle earth = objects.stream().filter(p -> p.getId() == 1).findFirst().get();
+            double originalX = earth.getX();
+            double originalY = earth.getY();
+            //evolucionar el sistema 1 día
+            evolveSystem();
+            double xDiff = 1/2d *  Math.pow(earth.getX() - originalX, 2);
+            double yDiff = 1/2d * Math.pow(earth.getY() - originalY, 2);
+            double diff = xDiff + yDiff;
+            fileHandler.saveData("deltaTDiffs.tsv", i, diff);
         }
     }
 
